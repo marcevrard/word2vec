@@ -6,6 +6,7 @@
     "iter": 10,
     "win_size": 15,
     "negative": 20,
+    "hs": 0,
     "binary": 1,
     "sample": 1e-5
 }

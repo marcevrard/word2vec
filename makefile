@@ -4,8 +4,8 @@ CFLAGS=-lm -pthread -O3 -march=native -Wall -funroll-loops -Wno-unused-result
 
 SRC := src
 BIN := bin
-DEMO := scripts/demo
 PY := scripts
+DEMO := scripts/demo
 
 objects = word2vec word2phrase distance word-analogy compute-accuracy
 
