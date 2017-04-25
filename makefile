@@ -4,8 +4,8 @@ CFLAGS=-lm -pthread -O3 -march=native -Wall -funroll-loops -Wno-unused-result
 
 SRC := src
 BIN := bin
-DEMO := demo_scripts
-PY := py_scripts
+DEMO := scripts/demo
+PY := scripts
 
 objects = word2vec word2phrase distance word-analogy compute-accuracy
 
@@ -18,8 +18,8 @@ $(objects): %: $(SRC)/%.c
 	$(CC) $< -o $(BIN)/$@ $(CFLAGS)
 
 scripts_exec:
-	chmod +x $(DEMO)/*.sh
 	chmod +x $(PY)/*.py
+	chmod +x $(DEMO)/*.sh
 
 clean:
 	rm -rf $(BIN)
