@@ -1,7 +1,7 @@
 {
     "corpus_fname": "data.txt",
     "cbow": 0,
-    "voc_min_cnt": 100,
+    "min_count": 100,
     "embeds_dim": 100,
     "iter": 1,
     "win_size": 15,

@@ -52,7 +52,7 @@ class Option:
 
         self.config = config = self._load_config()
 
-        (self.corpus_fname, self.cbow, self.voc_min_cnt, self.embeds_dim, self.iter,
+        (self.corpus_fname, self.cbow, self.min_count, self.embeds_dim, self.iter,
          self.win_size, self.negative, self.hs, self.binary, self.sample
         ) = (None,) * 10
 
@@ -74,6 +74,10 @@ class Option:
         self.w2v = os.path.join(self.bin_path, 'word2vec')
         self.eval = os.path.join(self.bin_path, 'compute-accuracy')
 
+        os.makedirs(self.data_path, exist_ok=True)
+        os.makedirs(self.model_path, exist_ok=True)
+        os.makedirs(self.eval_path, exist_ok=True)
+
     def _load_paths(self):
         with open(os.path.join(self.script_path, PATHS_FNAME)) as f:
             return json.load(f)
@@ -85,7 +89,12 @@ class Option:
             conf_fpath = self._get_param_tag_fpath(self.script_path, CONF_FNAME, ['sg'])
         print("Config file used:", conf_fpath)
         with open(conf_fpath) as f:
-            return json.load(f)
+            config_dic = json.load(f)
+        if self.argp.update_config:
+            update_dic(dic=config_dic, update=self.argp.update_config)
+            print("Config updated by:", self.argp.update_config)
+        return config_dic
+
 
     def set_ressources(self, num_threads=None, memory=None, num_jobs=1):
         if memory is None:
@@ -130,7 +139,7 @@ class Word2vec:
                    '-threads', opts.num_threads,
                    '-binary', opts.binary,
                    '-iter', opts.iter,
-                   '-min-count', opts.voc_min_cnt]
+                   '-min-count', opts.min_count]
         self._run_command(lst2str_lst(command))
 
 
@@ -177,6 +186,16 @@ def join_list(lst, sep=' '):
     return sep.join(lst2str_lst(lst))
 
 
+def update_dic(dic, update):
+    for key in update:
+        try:
+            dic[key]
+        except KeyError as err:
+            print(err, "Update dict holds wrong keys!")
+            raise
+    return dic.update(update)
+
+
 def get_args(args=None):     # Add possibility to manually insert args at runtime (e.g. for ipynb)
 
     parser = argparse.ArgumentParser(description=__doc__,
@@ -189,6 +208,8 @@ def get_args(args=None):     # Add possibility to manually insert args at runtim
                         help='Training dataset filepath.')
     parser.add_argument('-x', '--export-embeds', action='store_true',
                         help='Export embeddings and vocabulary to file.')
+    parser.add_argument('-u', '--update-config', type=json.loads,
+                        help="Add configuration setting(s) to local json config file.")
 
     return parser.parse_args(args)
 
