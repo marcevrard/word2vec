@@ -1,8 +1,10 @@
 {
-    "data_path": "./data",
+    "corpus_fpath": "./data/data.txt",
     "model_path": "./model",
     "bin_path": "./bin",
-    "eval_path": "./eval",
+    "quest_words_fpath": "./eval/question-data/questions-words.txt",
+    "quest_phrases_fpath": "./eval/question-data/questions-phrases.txt",
+    "result_path": "./eval/results",
     "embeds_basename": "vectors_w2v",
     "eval_fname": "eval.txt"
 }
