@@ -191,12 +191,6 @@ class Word2vec:
                 open(opts.result_fpath, 'a') as f_out:
             self._run_command(command_phr, stdin=f_phr_in, stdout=f_out)
 
-        # with open(opts.eval_fpath, 'w') as f_out:
-        #     f_out.write(params + '\n')
-        #     f_out.write('==========\n')
-        # with open(opts.eval_fpath, 'a') as f_out:
-        #     self._run_command(lst2str_lst(command), name=opts.eval, stdout=f_out)
-
 
 class Export:
     def __init__(self, opts):
