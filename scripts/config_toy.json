@@ -1,0 +1,10 @@
+{
+    "min_count": 0,
+    "embeds_dim": 3,
+    "iter": 1,
+    "win_size": 2,
+    "negative": 2,
+    "hs": 0,
+    "binary": 1,
+    "sample": 0
+}

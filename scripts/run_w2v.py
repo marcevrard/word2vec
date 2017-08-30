@@ -8,13 +8,19 @@ Synopsis
 --------
     examples:
     `````````
-        ./scripts/run_w2v.py -x --export
+        ./scripts/run_w2v.py -texc toy --corpus-fpath ./data/data_toy.txt
 
 Authors
 -------
 * Marc Evrard         (<marc.evrard@gmail.com>)
-'''
 
+License
+-------
+Copyright 2017 Marc Evrard
+
+Licensed under the Apache License, Version 2.0 (the "License")
+http://www.apache.org/licenses/LICENSE-2.0
+'''
 
 import argparse
 import json
@@ -23,8 +29,9 @@ import subprocess
 import sys
 from math import floor, log2
 
-import numpy as np
 import psutil
+
+import embedding_tools as emb
 
 
 PATHS_FNAME = 'paths.json'
@@ -88,7 +95,8 @@ class Option:
             return json.load(f)
 
     def _load_config(self):
-        conf_fpath = self.get_param_tag_fpath(self.script_path, CONF_FNAME, [self.algo])
+        config_type = 'toy' if self.argp.corpus_type == 'toy' else self.algo
+        conf_fpath = self.get_param_tag_fpath(self.script_path, CONF_FNAME, [config_type])
         print("Config file used:", conf_fpath)
         with open(conf_fpath) as f:
             config_dic = json.load(f)
@@ -192,41 +200,6 @@ class Word2vec:
             self._run_command(command_phr, stdin=f_phr_in, stdout=f_out)
 
 
-class Export:
-    def __init__(self, opts):
-        self.opts = opts
-
-        self.id2word = []
-        self.embeds = []
-
-    def import_embeds(self):
-        embeds, id2word = [], []
-        with open(self.opts.embeds_fpath) as f:
-            for idx, l in enumerate(f):
-                if idx == 0:
-                    n_words, dim = l.rstrip().split(' ')
-                else:   # Skip header line
-                    word, *vec = l.rstrip().split(' ')
-                    id2word.append(word)
-                    assert len(vec) == int(dim)
-                    try:
-                        embeds.append([float(el) for el in vec])
-                    except ValueError:
-                        print("**ERROR!**:", idx-1, word, len(vec), vec, sep='\n')
-            # print(len(embeds), n_words)
-            assert len(embeds) == int(n_words)
-
-        self.id2word = id2word
-        self.embeds = np.array(embeds, dtype=np.float32)    # pylint: disable=no-member
-
-    def export_embeds(self):
-        with open(self.opts.embeds_fpath[:-4] + '_voc.txt', 'w') as f:
-            for word in self.id2word:
-                f.write(word + '\n')
-        np.save(self.opts.embeds_fpath[:-4], self.embeds)
-        print("Mean | STD:", np.mean(self.embeds), '|', np.std(self.embeds))
-
-
 def lst2str_lst(lst):
     return [str(el) for el in lst]
 
@@ -249,15 +222,17 @@ def get_args(args=None):     # Add possibility to manually insert args at runtim
 
     parser = argparse.ArgumentParser(description=__doc__,
                                      formatter_class=argparse.RawDescriptionHelpFormatter)
+    parser.add_argument('-c', '--corpus-type', choices=['big', 'toy'], default='big',
+                        help='Training dataset name.')
+    parser.add_argument('--corpus-fpath',
+                        help='Training dataset filepath.')
     parser.add_argument('-t', '--train', action='store_true',
                         help='Train the models.')
     parser.add_argument('-e', '--eval', action='store_true',
                         help='Eval the models.')
-    parser.add_argument('-c', '--cbow', action='store_true', default=False,
+    parser.add_argument('--cbow', action='store_true', default=False,
                         help='Use CBOW algorithm for training.')
-    parser.add_argument('--corpus-fpath',
-                        help='Training dataset filepath.')
-    parser.add_argument('-x', '--export-embeds', action='store_true',
+    parser.add_argument('-x', '--convert-embeds', action='store_true',
                         help='Export embeddings and vocabulary to file.')
     parser.add_argument('-u', '--update-config', type=json.loads,
                         help="Add configuration setting(s) to local json config file.")
@@ -269,7 +244,6 @@ def main(argp):
 
     options = Option(argp)
     word2vec = Word2vec(options)
-    export = Export(options)
 
     if argp.train:
         print("\n** TRAIN MODEL **\n")
@@ -279,9 +253,8 @@ def main(argp):
         print("\n** EVALUATE MODEL **\n")
         word2vec.sim_eval()
 
-    if argp.export_embeds:
-        export.import_embeds()
-        export.export_embeds()
+    if argp.convert_embeds:
+        emb.conv_embeds(options.embeds_fpath)
 
 
 if __name__ == '__main__':
