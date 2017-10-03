@@ -8,7 +8,7 @@ Synopsis
 --------
     examples:
     `````````
-        ./scripts/run_w2v.py -texc toy --corpus-fpath ./data/data_toy.txt
+        ./scripts/run_w2v.py -texc toy --corpus-fpath ./data_toy/data_toy_lemmas.txt
 
 Authors
 -------
