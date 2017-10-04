@@ -132,7 +132,7 @@ class Option:
                         ('neg', self.negative),
                         ('dim', self.embeds_dim),
                         ('itr', self.iter),
-                        ('spl', self.sample)]
+                        ('spl', '{:0.0e}'.format(self.sample))]
 
         if job_idx is not None:
             model_params += [(idx_name, job_idx)]
