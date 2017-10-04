@@ -2,8 +2,8 @@
     "min_count": 100,
     "embeds_dim": 100,
     "iter": 1,
-    "win_size": 15,
-    "negative": 20,
+    "win_size": 10,
+    "negative": 15,
     "hs": 0,
     "binary": 1,
     "sample": 1e-3
