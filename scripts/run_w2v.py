@@ -152,7 +152,7 @@ class Word2vec:
     @staticmethod
     def _run_command(command, name=None, stdin=None, stdout=None):
         print('Run:', join_list(command))
-        subprocess.run(lst2str_lst(command), stdin=stdin, stdout=stdout)
+        subprocess.run(lst2str_lst(command), stdin=stdin, stdout=stdout, check=True)
         if name is None:
             name = command[0]
         print("'{}' done.\n".format(name))
