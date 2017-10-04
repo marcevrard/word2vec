@@ -78,6 +78,8 @@ class Option:
             if hasattr(self, key):
                 setattr(self, key, value)
 
+        self.set_ressources()   # TODO: (num_threads, memory, num_jobs)
+
         self.emb_ext = '.bin' if self.binary else '.txt'
 
         self._build_param_tag_paths(job_idx)
